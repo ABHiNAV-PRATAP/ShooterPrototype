@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -17,9 +19,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -41,7 +41,7 @@ public class Shooter extends SubsystemBase {
   final double bkV = 0;
   final double bkA = 0;
 
-  final double wheelRadius = Units.inchesToMeters(0);
+  final double wheelRadius = Units.inchesToMeters(2);
 
   WPI_TalonSRX topMotor;
   WPI_TalonSRX bottomMotor;
@@ -95,9 +95,27 @@ public class Shooter extends SubsystemBase {
   }
 
 
+  List<Double> topVelocities = new ArrayList<Double>();
+  List<Double> bottomVelocities = new ArrayList<Double>();
 
   @Override
   public void periodic() {
+    topVelocities.add(getTopVelocity());
+    bottomVelocities.add(getBottomVelocity());
+
+    double[] topVelocitiesArray = new double[topVelocities.size()];
+    double[] bottomVelocitiesArray = new double[bottomVelocities.size()];
+
+    for (int i = 0; i < topVelocities.size(); i ++)
+    {
+      topVelocitiesArray[i] = topVelocities.get(i);
+    }
+
+    for (int i = 0; i < bottomVelocities.size(); i ++)
+    {
+      bottomVelocitiesArray[i] = topVelocities.get(i);
+    }
+
     // This method will be called once per scheduler run
     topMotor.setInverted(topMotorInverted.getBoolean(true));
     bottomMotor.setInverted(bottomMotorInverted.getBoolean(false));
@@ -105,9 +123,9 @@ public class Shooter extends SubsystemBase {
     bottomMotorVoltage.setDouble(bottomMotor.getMotorOutputVoltage());
     topMotorVelocity.setDouble(getTopVelocity());
     bottomMotorVelocity.setDouble(getBottomVelocity());
-    topMotorVelocityGraph.setDouble(getTopVelocity());
-    bottomMotorVelocityGraph.setDouble(getBottomVelocity());
-
+    topMotorVelocityGraph.setDoubleArray(topVelocitiesArray);
+    bottomMotorVelocityGraph.setDoubleArray(bottomVelocitiesArray);
+    System.out.println("Top Motor Velocity " + getTopVelocity());
     boolean isManualControl = manualControl.getBoolean(true);
     
 
