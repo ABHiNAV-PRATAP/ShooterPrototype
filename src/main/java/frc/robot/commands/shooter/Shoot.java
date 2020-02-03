@@ -30,6 +30,7 @@ public class Shoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooter.setServoAngle(60);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -53,6 +54,7 @@ public class Shoot extends CommandBase {
   public void end(boolean interrupted) {
     shooter.setTopMotorVoltage(0);
     shooter.setBottomMotorVoltage(0);
+    shooter.setServoAngle(0);
   }
 
   // Returns true when the command should end.

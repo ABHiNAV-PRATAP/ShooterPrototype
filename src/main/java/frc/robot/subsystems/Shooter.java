@@ -44,7 +44,8 @@ public class Shooter extends SubsystemBase {
 
   WPI_TalonSRX topMotor;
   WPI_TalonSRX bottomMotor;
-  // Servo servo = new Servo(0);
+
+  Servo servo = new Servo(0);
 
   public PIDController tpid = new PIDController(tkP, tkI, tkD);
   public SimpleMotorFeedforward tff = new SimpleMotorFeedforward(tkS, tkV, tkA);
@@ -92,7 +93,7 @@ public class Shooter extends SubsystemBase {
 
   public void setServoAngle(double degrees)
   {
-    // servo.setAngle(degrees);
+    servo.setAngle(degrees);
   }
 
   public void setBottomMotorVoltage(double value) {
