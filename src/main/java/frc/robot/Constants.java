@@ -16,4 +16,23 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static int
+        kFrontLeftMotor = 1,
+        kBackLeftMotor = 2,
+        kFrontRightMotor = 3, 
+        kBackRightMotor = 4;
+    
+    public static int
+        kTopShooterMotor = 10, 
+        kBottomShooterMotor = 11;
+
+    public static int   
+        kIntakeMotor = 5;
+
+    public static double 
+        kIntakeSpeed = 0.5;
+    
+
+
 }

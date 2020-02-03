@@ -18,7 +18,8 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.commands.shooter.Shoot;
-
+import frc.robot.commands.intake.IntakeCell;
+import frc.robot.subsystems.Intake;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -30,8 +31,12 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private final Shooter shooter = new Shooter();
+
+  private final Intake intake = new Intake();
   
   private final JoystickButton shoot;
+
+  private final JoystickButton intakeCell;
 
   private final Drivetrain drivetrain = new Drivetrain();
 
@@ -47,6 +52,8 @@ public class RobotContainer {
   public RobotContainer() {
 
     shoot = new JoystickButton(driveJoystick, 1);
+
+    intakeCell = new JoystickButton(driveJoystick, 2);
     // Configure the button bindings
 
     // shooter.setDefaultCommand(
@@ -76,6 +83,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     shoot.whileHeld(new Shoot(shooter, () -> 60, () -> 80).andThen(() -> shooter.setBottomMotorVoltage(0)).andThen(() -> shooter.setTopMotorVoltage(0)));
+    intakeCell.whenPressed(new IntakeCell(intake));
 
   }
 
