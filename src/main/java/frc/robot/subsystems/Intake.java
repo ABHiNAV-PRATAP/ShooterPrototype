@@ -21,8 +21,7 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     intakeVictor = new WPI_VictorSPX(5);
-    intakeVictor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-
+    intakeVictor.setInverted(true);
     // invrert if needed
 
 

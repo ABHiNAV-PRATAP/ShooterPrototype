@@ -5,12 +5,17 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+
+
+// neos are spinning backwards so fix tht, spacer is needed 
 package frc.robot.subsystems;
 
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Servo;
@@ -42,8 +47,8 @@ public class Shooter extends SubsystemBase {
 
   final double wheelRadius = Units.inchesToMeters(2);
 
-  WPI_TalonSRX topMotor;
-  WPI_TalonSRX bottomMotor;
+  CANSparkMax topMotor;
+  CANSparkMax bottomMotor;
 
   Servo servo = new Servo(0);
 
@@ -70,29 +75,32 @@ public class Shooter extends SubsystemBase {
    * Creates a new Shooter.
    */
   public Shooter() {
-    topMotor = new WPI_TalonSRX(10);
-    bottomMotor = new WPI_TalonSRX(11);
+    topMotor = new CANSparkMax(10, MotorType.kBrushless);
+    bottomMotor = new CANSparkMax(11, MotorType.kBrushless);
 
-    topMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-    bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    // topMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    // bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-    topMotor.setSelectedSensorPosition(0);
-    bottomMotor.setSelectedSensorPosition(0);
+    // topMotor.setSelectedSensorPosition(0);
+    // bottomMotor.setSelectedSensorPosition(0);
+    // topMotor.setInverted(true);
+    //bottomMotor.setInverted(false);
+
     topMotor.setInverted(true);
     bottomMotor.setInverted(false);
 
-    
-
     tpid.setTolerance(1, 1);
     bpid.setTolerance(1, 1);
+
+    topMotor.getEncoder().setPosition(0);
+    bottomMotor.getEncoder().setPosition(0);
   }
 
   public void setTopMotorVoltage(double value) {
     topMotor.setVoltage(value);
   }
 
-  public void setServoAngle(double degrees)
-  {
+  public void setServoAngle(double degrees) {
     servo.setAngle(degrees);
   }
 
@@ -102,21 +110,21 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    topMotorVoltage.setDouble(topMotor.getMotorOutputVoltage());
-    bottomMotorVoltage.setDouble(bottomMotor.getMotorOutputVoltage());
+    topMotorVoltage.setDouble(topMotor.getBusVoltage());
+    bottomMotorVoltage.setDouble(bottomMotor.getBusVoltage());
     topMotorVelocity.setDouble(getTopVelocity());
     bottomMotorVelocity.setDouble(getBottomVelocity());
     bpid.setP(bottomP.getDouble(bkP));
+    System.out.println("Top encoder ticks:" + topMotor.getEncoder().getPosition());
+    System.out.println("Bottom encoder ticks: " + bottomMotor.getEncoder().getPosition());
   }
 
-  public double getTopVelocity ()
-  {
-    return topMotor.getSelectedSensorVelocity() * 10 / 4096; 
+  public double getTopVelocity() {
+    return topMotor.getEncoder().getVelocity();
   }
 
-  public double getBottomVelocity ()
-  {
-    return bottomMotor.getSelectedSensorVelocity() * 10 / 4096; 
+  public double getBottomVelocity() {
+    return bottomMotor.getEncoder().getVelocity();
   }
 
 }

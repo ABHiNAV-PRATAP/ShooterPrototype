@@ -83,7 +83,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     shoot.whileHeld(new Shoot(shooter, () -> 60, () -> 80).andThen(() -> shooter.setBottomMotorVoltage(0)).andThen(() -> shooter.setTopMotorVoltage(0)));
-    intakeCell.whenPressed(new IntakeCell(intake));
+    intakeCell.whileHeld(new IntakeCell(intake));
 
   }
 

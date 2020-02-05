@@ -27,7 +27,6 @@ public class Shoot extends CommandBase {
     addRequirements(shooter);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     shooter.setServoAngle(60);
@@ -45,8 +44,11 @@ public class Shoot extends CommandBase {
       double calctop = shooter.tpid.calculate(tv);
       double calcBot = shooter.bpid.calculate(bv);
       System.out.println(calctop);
-      shooter.setTopMotorVoltage(calctop + shooter.tff.calculate(tsp));
-      shooter.setBottomMotorVoltage(calcBot + shooter.bff.calculate(bsp));
+      //shooter.setTopMotorVoltage(calctop + shooter.tff.calculate(tsp));
+      //shooter.setBottomMotorVoltage(calcBot + shooter.bff.calculate(bsp));
+
+      shooter.setTopMotorVoltage(6);
+      shooter.setBottomMotorVoltage(8);
   }
 
   // Called once the command ends or is interrupted.
