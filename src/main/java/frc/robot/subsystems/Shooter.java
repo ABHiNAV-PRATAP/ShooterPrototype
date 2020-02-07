@@ -29,21 +29,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-  double tkP = 0.127;
+  double tkP = 0.0075; //0.957;
   final double tkI = 0;
   double tkD = 0;
 
-  final double tkS = 0.6;
-  final double tkV = 0.13;
-  final double tkA = 0.05;
+  final double tkS = 0.0643; //0.0643
+  final double tkV = 0.128; //0.128
+  final double tkA = 0.0205; //0.0205
 
-  double bkP = 0.127;
+  double bkP = -0.0075; // .01
   final double bkI = 0;
   double bkD = 0;
 
-  final double bkS = 0.0886;
-  final double bkV = 0.14;
-  final double bkA = 0.05;
+  final double bkS = 0.0475; //0.136
+  final double bkV = 0.134; //0.128
+  final double bkA = 0.0264; //.0272
 
   final double wheelRadius = Units.inchesToMeters(2);
 
@@ -61,22 +61,28 @@ public class Shooter extends SubsystemBase {
 
   NetworkTableEntry topMotorVoltage = tab.add("Top Motor Voltage", 0).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Min", -12, "Max", 12, "Center", 0, "Number of Tick Marks", 12)).getEntry();
   NetworkTableEntry bottomMotorVoltage = tab.add("Bottom Motor Voltage", 0).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Min", -12, "Max", 12, "Center", 0, "Number of Tick Marks", 12)).getEntry();
-  NetworkTableEntry topMotorVelocity = tab.add("TopVelocity (rps)", 0).withWidget(BuiltInWidgets.kTextView).withSize(2, 1).getEntry();
-  NetworkTableEntry bottomMotorVelocity = tab.add("BottomVelocity (rps)", 0).withWidget(BuiltInWidgets.kTextView).withSize(2, 1).getEntry();
+  NetworkTableEntry topMotorVelocity = tab.add("t vel", 0).withWidget(BuiltInWidgets.kTextView).withSize(2, 1).getEntry();
+  NetworkTableEntry bottomMotorVelocity = tab.add("b vel", 0).withWidget(BuiltInWidgets.kTextView).withSize(2, 1).getEntry();
 
   NetworkTableEntry bottomP = tab.add("bottom P", bkP).withWidget(BuiltInWidgets.kTextView).getEntry();
+  NetworkTableEntry topP = tab.add("top P", tkP).withWidget(BuiltInWidgets.kTextView).getEntry();
+  NetworkTableEntry bottomD = tab.add("bottom D", bkD).withWidget(BuiltInWidgets.kTextView).getEntry();
+  // NetworkTableEntry topS = tab.add("top S", tkS).withWidget(BuiltInWidgets.kTextView).getEntry();
+  // NetworkTableEntry bottomS = tab.add("bottom S", bkS).withWidget(BuiltInWidgets.kTextView).getEntry();
+  // NetworkTableEntry topV = tab.add("top V", tkV).withWidget(BuiltInWidgets.kTextView).getEntry();
+  // NetworkTableEntry bottomV = tab.add("bottom V ", bkV).withWidget(BuiltInWidgets.kTextView).getEntry();
+
 
   public NetworkTableEntry topSetpointShuffleboard = tab.add("Top Setpoint", 0).withSize(2, 1).withWidget(BuiltInWidgets.kTextView).getEntry();
   public NetworkTableEntry bottomSetpointShuffleboard = tab.add("Bottom Setpoint", 0).withSize(2, 1).withWidget(BuiltInWidgets.kTextView).getEntry();
-  // public NetworkTableEntry servoAngle = tab.add("Servo Angle", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
 
 
   /**
    * Creates a new Shooter.
    */
   public Shooter() {
-    topMotor = new CANSparkMax(10, MotorType.kBrushless);
-    bottomMotor = new CANSparkMax(11, MotorType.kBrushless);
+    topMotor = new CANSparkMax(11, MotorType.kBrushless);
+    bottomMotor = new CANSparkMax(10, MotorType.kBrushless);
 
     // topMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     // bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -86,11 +92,11 @@ public class Shooter extends SubsystemBase {
     // topMotor.setInverted(true);
     //bottomMotor.setInverted(false);
 
-    topMotor.setInverted(true);
-    bottomMotor.setInverted(false);
+    topMotor.setInverted(false);
+    bottomMotor.setInverted(true);
 
-    tpid.setTolerance(1, 1);
-    bpid.setTolerance(1, 1);
+    // tpid.setTolerance(1, 1);
+    // bpid.setTolerance(1, 1);
 
     topMotor.getEncoder().setPosition(0);
     bottomMotor.getEncoder().setPosition(0);
@@ -105,7 +111,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setBottomMotorVoltage(double value) {
-    bottomMotor.setVoltage(value);
+    bottomMotor.set(value/12);
   }
 
   @Override
@@ -114,17 +120,21 @@ public class Shooter extends SubsystemBase {
     bottomMotorVoltage.setDouble(bottomMotor.getBusVoltage());
     topMotorVelocity.setDouble(getTopVelocity());
     bottomMotorVelocity.setDouble(getBottomVelocity());
+    tpid.setP(topP.getDouble(tkP));
     bpid.setP(bottomP.getDouble(bkP));
-    System.out.println("Top encoder ticks:" + topMotor.getEncoder().getPosition());
-    System.out.println("Bottom encoder ticks: " + bottomMotor.getEncoder().getPosition());
+    bpid.setD(bottomP.getDouble(bkD));
+    //bff = new SimpleMotorFeedforward(bottomP.getDouble(0.126), bkV);
+// System.out.println(bff.ks);
+    // System.out.println("Top encoder ticks:" + topMotor.getEncoder().getPosition());
+    // System.out.println("Bottom encoder ticks: " + bottomMotor.getEncoder().getPosition());
   }
 
   public double getTopVelocity() {
-    return topMotor.getEncoder().getVelocity();
+    return topMotor.getEncoder().getVelocity() / 60;
   }
 
   public double getBottomVelocity() {
-    return bottomMotor.getEncoder().getVelocity();
+    return bottomMotor.getEncoder().getVelocity() / 60;
   }
 
 }

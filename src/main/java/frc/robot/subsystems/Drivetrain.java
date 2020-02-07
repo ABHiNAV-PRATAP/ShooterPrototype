@@ -53,7 +53,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(gyro.getAngle());
+    // System.out.println(gyro.getAngle());
     // System.out.println("Left: " + fLMaster.getSelectedSensorPosition());
     // System.out.println("Right: " + fRMaster.getSelectedSensorPosition());
     // This method will be called once per scheduler run
