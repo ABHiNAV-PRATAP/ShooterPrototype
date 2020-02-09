@@ -8,18 +8,21 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.drivetrain.ArcadeDrive;
+import frc.robot.commands.drivetrain.DavidDrive;
+import frc.robot.commands.intake.IntakeCell;
+import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Shooter;
-import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.intake.IntakeCell;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -44,6 +47,10 @@ public class RobotContainer {
 
   private Joystick driveJoystick = new Joystick(0);
 
+  private final XboxController controller = new XboxController(1);
+
+  public static final PowerDistributionPanel PDP = new PowerDistributionPanel();
+
 
 
   /**
@@ -63,14 +70,37 @@ public class RobotContainer {
     //     () -> shooter.bottomSetpointShuffleboard.getDouble(0)
     //   )
     // );
+    
     drivetrain.setDefaultCommand(
       new ArcadeDrive(
         drivetrain,
-        () -> driveJoystick.getY(), 
-        () -> driveJoystick.getX(),
+        () -> controller.getY(Hand.kRight), 
+        () -> controller.getX(Hand.kRight),
         () -> driveJoystick.getThrottle()
       )
     );
+    
+    
+    // drivetrain.setDefaultCommand(
+    //   new ArcadeDrive(
+    //     drivetrain,
+    //     () -> controller.getY(Hand.kLeft), 
+    //     () -> controller.getX(Hand.kLeft),
+    //     () -> controller.getTriggerAxis(Hand.kLeft)
+    //   )
+    // );
+    
+    
+    // drivetrain.setDefaultCommand(
+    //   new DavidDrive(
+    //     drivetrain,
+    //     () -> controller.getTriggerAxis(Hand.kRight),
+    //     () -> controller.getTriggerAxis(Hand.kLeft),
+    //     () -> controller.getX(Hand.kLeft)
+    //   )
+    // );
+    
+
     configureButtonBindings();
   }
 
